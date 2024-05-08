@@ -9,12 +9,12 @@ import warnings
 from ebooklib import epub
 
 
-
-XML_TITLE_LABEL = '<h1>{ct}</h1><br/>'
-XML_PARAGRAPH_LABEL = '<p>{p}</p><br/>'
+XML_TITLE_LABEL = '<h1>{ct}</h1><hr/>'
+XML_PARAGRAPH_LABEL = '<p>{p}</p>'
 XML_IMAGE_LABEL = '''<div class="illus duokan-image-single img">
 <img alt="{fb}" src="../Images/{fn}"/>
 </div>'''
+
 
 
 class Epub:

@@ -43,7 +43,7 @@ if __name__ == '__main__':
                                publisher=wk.book['publisher'], source_url=wk.book['api']['detail'], tag_list=wk.book['tags'],
                                cover_path='src/cover.jpg', vol_idx=vol_idx)
 
-        print('start making volume:', book_title)
+        print('Start making volume:', book_title)
         for chapter_title, chapter_href in it['chapter']:
             content_title, content_list, image_urls = wk.get_chapter(chapter_href)
             if wk.error_msg: print(wk.error_msg); sys.exit(0)
@@ -51,12 +51,12 @@ if __name__ == '__main__':
             # 设置HTML格式
             html_body = XML_TITLE_LABEL.format(ct=content_title)
             if content_list:
-                print('├──', 'start downloading chapter-text:', chapter_title)
+                print('├──', 'Start downloading chapter-text:', chapter_title)
                 for p in content_list:
                     html_body += XML_PARAGRAPH_LABEL.format(p=p)
-                print('│   └── download chapter-text completed.')
+                print('│   └── Download chapter-text completed.')
             elif image_urls:
-                print('├──', 'start downloading chapter-image:', chapter_title)
+                print('├──', 'Start downloading chapter-image:', chapter_title)
                 for img_url in image_urls:
                     file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
                     if file_name:
@@ -66,12 +66,12 @@ if __name__ == '__main__':
                         book_epub.set_images(file_path)
                         html_body += XML_IMAGE_LABEL.format(fb=file_base, fn=file_name)
                     print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
-                print('│   └── download chapter-image completed.')
+                print('│   └── Download chapter-image completed.')
             else:
-                print('│   └── downloaded empty chapter.')
+                print('│   └── Downloaded empty chapter.')
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
 
         book_epub.pack_book(save_epub_dir)
         wk.clear_src()
-        print('└── volume finished.\n')
+        print('└── Packing volume completed.\n')
 

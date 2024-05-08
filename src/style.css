@@ -1,63 +1,39 @@
-/*預設文本樣式*/
 body {
-  padding: 0%;
-  margin-top: 0%;
-  margin-bottom: 0%;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   margin-left: 1%;
   margin-right: 1%;
-  line-height: 130%;
-  text-align: justify;
+  line-height: 1.3;
 }
 h1 {
-  font-size: 1.65em;
-  line-height: 120%;
+  line-height: 1.3;
   text-align: center;
   font-weight: bold;
-  margin-top: 0.1em;
-  margin-bottom: 0.4em;
+  font-size: 1.5em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
-h2 {
-  font-size: 1.25em;
-  line-height: 120%;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 0.3em;
-  margin-bottom: 0.5em;
-}
-h3 {
-  font-size: 0.95em;
-  line-height: 120%;
-  text-align: center;
-  text-indent: 0;
-  font-weight: bold;
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-h4 {
-  font-size: 1.4em;
-  text-align: center;
-  line-height: 1.2em;
-  text-indent: 0;
-  font-weight: bold;
-  margin-top: 1em;
-  margin-bottom: 1.5em;
-}
-div {
+div,
+figure,
+section {
   margin: 0;
   padding: 0;
   text-align: justify;
 }
 p {
   text-indent: 2em;
+  line-height: 1.3;
   display: block;
-  line-height: 1.3em;
-  margin-top: 0.4em;
-  margin-bottom: 0.4em;
 }
-/*圖片相關*/
-.illus {
-  text-indent: 0;
-  text-align: center;
+p.asterisk,
+p.numerals {
+  text-indent: 5em;
+  padding: 1em 0;
+  display: block;
+}
+p.numerals {
+  font-weight: bold;
 }
 .cover {
   margin: 0;
@@ -65,343 +41,37 @@ p {
   text-indent: 0;
   text-align: center;
 }
-.coverborder {
-  border-style: none;
-  border-color: #716F71;
-  border-width: 1px;
+.cover svg,
+.illust svg {
+  border-radius: 2vw;
 }
-/*預設格式相關樣式*/
-.right {
-  text-indent: 0;
-  text-align: right;
+.illust {
+  display: block;
 }
-.left {
-  text-indent: 0;
-  text-align: left;
+.illust:not(:last-child) {
+  margin-bottom: 1em;
 }
-.center {
-  text-indent: 0;
-  text-align: center;
-}
-.zin {
-  text-indent: 0;
-}
-.bold {
-  font-weight: bold;
-}
-.stress {
-  font-weight: bold;
-  font-size: 1.1em;
-  margin-top: 0.3em;
-  margin-bottom: 0.3em;
-}
-.author {
-  font-size: 1.2em;
-  text-align: right;
-  font-weight: bold;
-  font-style: italic;
-  margin-right: 1em;
-}
-.dash-break {
-  word-break: break-all;
-  word-wrap: break-word;
-}
-.no-d {
-  text-decoration: none;
-}
-.message {
-  text-indent: 0;
-  line-height: 1.2em;
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-.meg {
-  font-size: 1.3em;
-  text-indent: 0;
-  font-weight: bold;
+.entry {
+  padding: 3px;
+  background: none repeat scroll 0 0 #eee;
+  border-radius: 10px;
   margin-top: 0.5em;
-  margin-bottom: 0.5em;
-}
-.tilh {
-  text-indent: 0;
-  line-height: 1em;
-  margin: 0;
-}
-/*文字大小*/
-.em04 {
-  font-size: 0.4em;
-}
-.em05 {
-  font-size: 0.5em;
-}
-.em06 {
-  font-size: 0.6em;
-}
-.em07 {
-  font-size: 0.7em;
-}
-.em08 {
-  font-size: 0.8em;
-}
-.em09 {
-  font-size: 0.9em;
-}
-.em11 {
-  font-size: 1.1em;
-}
-.em12 {
-  font-size: 1.2em;
-}
-.em125 {
-  font-size: 1.25em;
-}
-.em13 {
-  font-size: 1.3em;
-}
-.em14 {
-  font-size: 1.4em;
-}
-.em15 {
-  font-size: 1.5em;
-}
-.em16 {
-  font-size: 1.6em;
-}
-.em17 {
-  font-size: 1.7em;
-}
-.em18 {
-  font-size: 1.8em;
-}
-.em19 {
-  font-size: 1.9em;
-}
-.em20 {
-  font-size: 2em;
-}
-.em21 {
-  font-size: 2.1em;
-}
-.em22 {
-  font-size: 2.2em;
-}
-.em23 {
-  font-size: 2.3em;
-}
-.em24 {
-  font-size: 2.4em;
-}
-.em25 {
-  font-size: 2.5em;
-}
-.em26 {
-  font-size: 2.6em;
-}
-.em27 {
-  font-size: 2.7em;
-}
-.em28 {
-  font-size: 2.8em;
-}
-.em29 {
-  font-size: 2.9em;
-}
-.em30 {
-  font-size: 3em;
-}
-/*格校着重号*/
-.dot {
-  -webkit-text-emphasis-style: filled dot;
-  -epub-text-emphasis-style: filled circle;
-  text-emphasis: circle #000;
-  text-emphasis-position: under;
-}
-/*預設目錄樣式*/
-.contents {
-  text-indent: 0;
-  text-align: left;
-  padding: 0.5em 0 0.6em 1em;
-}
-.mulu {
-  text-indent: 0;
-  text-align: left;
-  padding: 0.3em 0 0.3em 0;
-}
-.back {
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-size: cover;
-}
-/*圖片允許放大*/
-/*
-html代碼：
-
-<div class="duokan-image-single illus"><img alt="圖片名" src="../Images/圖片名.jpg" /></div>
-
-圖片導覽：
-
-  <div class="duokan-image-gallery">
-	<div class="illus duokan-image-single"><img alt="圖片名" src="../Images/圖片名.jpg" /></div>
-	<div class="illus duokan-image-gallery-cell"><img alt="圖片名" src="../Images/圖片名.jpg" /></div>
- </div>
-*/
-/*預設註釋樣式*/
-.footnote {
-  height: 1.2em !important;
-  width: auto;
-  border: 0;
-}
-.duokan-footnote {
-  height: 1.2em !important;
-  width: auto;
-  border: 0;
-}
-.duokan-footnote-item {
-  text-indent: 0;
-  font-family: "DK-SONGTI";
-  text-shadow: 0 0 0.1em #000;
-  font-size: 0.9em;
-  text-align: left;
-}
-sup {
-  font-size: 0.75em;
-  line-height: 1.2;
-  vertical-align: super !important;
-}
-/*
-html代碼：
-
-<a class="duokan-footnote no-d" epub:type="noteref" href="#n1" id="A_1"><sup><img alt="note" class="footnote" src="../Images/note.png" /></sup></a>
-
-
-    <aside epub:type="footnote" id="n1">
-      <ol class="duokan-footnote-content">
-        <li class="duokan-footnote-item" id="n1" value="1"></li>
-      </ol>
-    </aside>
-
-代碼說明：
-1. 請將「href="n1"」「id="n1"」「value="1"」這三段代碼中的數字改為該註釋的順序
-例：第3個註釋的該段代碼為「href="n3"」「id="n3"」「value="3"」
-2. 「註：」根據不同情況可以改為其它文字，例如譯者名
-*/
-
-.title {
-  font-family: FZLanTingHei-DB-GBK;
-}
-.illus1 {
-  font-family: "AR TianNiuGB HV";
-}
-.illus2 {
-  font-family: "FZFW ZhuZi HeiS H";
-}
-/*關於 Summary */
-.s-hr1 {
-  margin: 1em -3em 4px -3em;
-}
-.s-hr2 {
-  margin: 0 -3em 0.8em -3em;
-}
-.summary {
-  margin: 0;
-  padding: 0;
-  margin-bottom: 0;
-  text-align: center;
-  text-indent: 0;
-}
-.renwu {
-  margin-bottom: -0.6em;
-  text-align: center;
-  font-size: 1.4em;
-}
-/*以下填寫自定義css樣式*/
-.fr {
-  float: right;
-}
-.fl {
-  float: left;
-}
-.vt {
-  vertical-align: top;
-}
-.vb {
-  vertical-align: bottom;
-}
-.vm {
-  vertical-align: middle;
-}
-.bs {
-  border-spacing: 0;
-}
-.bc {
-  border-collapse: collapse;
-}
-.lh {
-  line-height: 1em;
-}
-.t-lt {
-  text-decoration: line-through;
-}
-.pius1 {
-  text-indent: 0;
-  line-height: 1.1em;
-  font-weight: bold;
-  margin: 2em 0 2em 1.7em;
-  font-family: "AR TianNiuGB HV";
-  font-size: 1.2em;
-}
-.biaoti1 {
-  font-size: 1.1em;
-  margin-left: 3em;
-  font-family: "AR TianNiuGB HV";
-}
-.biaoti2 {
-  text-indent: 0;
-  margin: 1.5em 0 0 3.5em;
-  font-size: 1.1em;
-  font-family: "FZFW ZhuZi HeiS H";
-}
-.rotate1 {
-  -webkit-transform: rotate(-4deg);
-  transform: rotate(-4deg);
-}
-.co0 {
   color: #000;
 }
-.tco1 {
-  color: #DC3B67;
+.credits,
+p.last-update {
+  background: none repeat scroll 0 0 #eee;
+  text-indent: 0;
+  text-align: center;
 }
-.tco2 {
-  color: #1B9BDC;
+.credits b {
+  background: none repeat scroll 0 0 #eee;
 }
-.tco3 {
-  color: #fff;
-  text-shadow: 0 0 3px #000;
-}
-.tco4 {
-  color: #7F8A8E;
-}
-.ico1 {
-  color: #fff;
-  text-shadow: 0 0 3px #AA6678;
-}
-.ico2 {
-  color: #fff;
-  text-shadow: 0 0 3px #787C7D;
-}
-.ico3 {
-  color: #787C7D;
-  text-shadow: 0 0 3px #fff;
-}
-.ico4 {
-  color: #fff;
-  text-shadow: 0 0 3px #466D91;
-}
-.ico5 {
-  color: #fff;
-  text-shadow: 0 0 3px #D96271;
-}
-.ico6 {
-  color: #DE6085;
-  text-shadow: 0 0 3px #fff;
+h1.credits {
+  background: none repeat scroll 0 0 #eee;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  padding: 1em 0 1em 0;
+  display: block;
 }
