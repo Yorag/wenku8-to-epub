@@ -4,6 +4,8 @@
 import os
 import sys
 
+from PIL import Image
+
 from create_epub import Epub, XML_TITLE_LABEL, XML_PARAGRAPH_LABEL, XML_IMAGE_LABEL
 from wenku8 import Wenku8Download
 
@@ -80,9 +82,12 @@ if __name__ == '__main__':
                 for img_url in image_urls:
                     file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
                     if file_name:
-                        if use_divimage_set_cover and img_url == image_urls[0]: # 将插图的第一张图片作为封面
-                            book_epub.set_cover(file_path)
-                            is_set_cover = True
+                        if use_divimage_set_cover and not is_set_cover: # 将插图的第一张长图作为封面
+                            with Image.open(file_path) as img:
+                                width, height = img.size
+                            if width <= height:
+                                book_epub.set_cover(file_path)
+                                is_set_cover = True
                         book_epub.set_images(file_path)
                         html_body += XML_IMAGE_LABEL.format(fb=file_base, fn=file_name)
                     print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
