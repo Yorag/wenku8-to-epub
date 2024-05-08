@@ -13,7 +13,7 @@ from wenku8 import Wenku8Download
 # epub存储目录（相对路径/绝对路径）
 save_epub_dir = 'epub'
 # 每次网络请求后停顿时间，避免封IP
-sleep_time = 1
+sleep_time = 2
 # 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
 use_divimage_set_cover = True
 # 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
@@ -27,13 +27,14 @@ if not os.path.exists(save_epub_dir):
 
 if __name__ == '__main__':
     book_id = input('输入要下载的小说id（如 https://www.wenku8.net/book/2906.htm 的id是2906）：')
-    if not book_id.isdigit(): print('book_id is valid.'); sys.exit(0)
+    print()
+    if not book_id.isdigit(): print('Error: book_id is valid.'); sys.exit(0)
 
     wk = Wenku8Download(book_id)
-    if wk.error_msg: print(wk.error_msg); sys.exit(0)
+    if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
     wk.sleep_time = sleep_time # 设置延迟时间
 
-    print('\nLight Noval Title:', wk.book['title'], '\n')
+    print('Light Noval Title:', wk.book['title'], '\n')
 
     # 单独下载某一/些卷
     volume_toc = '\n'.join([str(i+1) + ': ' + it['volume'] for i,it in enumerate(wk.book['toc'])])
@@ -65,17 +66,17 @@ if __name__ == '__main__':
         print('Start making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
             content_title, content_list, image_urls = wk.get_chapter(chapter_href)
-            if wk.error_msg: print(wk.error_msg); sys.exit(0)
+            if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
 
             # 设置HTML格式
             html_body = XML_TITLE_LABEL.format(ct=chapter_title)
             if content_list:
-                print('├──', 'Start downloading chapter-text:', chapter_title)
+                print('├── Start downloading chapter-text:', chapter_title)
                 for p in content_list:
                     html_body += XML_PARAGRAPH_LABEL.format(p=p)
                 print('│   └── Download chapter-text completed.')
             elif image_urls:
-                print('├──', 'Start downloading chapter-image:', chapter_title)
+                print('├── Start downloading chapter-image:', chapter_title)
                 for img_url in image_urls:
                     file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
                     if file_name:
@@ -87,7 +88,7 @@ if __name__ == '__main__':
                     print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
                 print('│   └── Download chapter-image completed.')
             else:
-                print('│   └── Downloaded empty chapter.')
+                print('├── Downloaded empty chapter.')
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
 
         if not is_set_cover: # 插图第一张图片未能设置为封面，就把缩略图作为封面

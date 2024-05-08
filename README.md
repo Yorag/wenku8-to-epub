@@ -42,7 +42,7 @@ python main.py
 | 参数名                   | 默认值 | 作用描述                                                     |
 | :----------------------- | ------ | ------------------------------------------------------------ |
 | `save_epub_dir`          | `epub` | epub存储目录（相对路径/绝对路径）                            |
-| `sleep_time`             | `1`    | 每次网络请求后停顿时间，避免封IP                             |
+| `sleep_time`             | `2`    | 每次网络请求后停顿时间，避免封IP                             |
 | `use_divimage_set_cover` | `True` | 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面   |
 | `wenkupic_proxy_host`    | `None` | 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名 |
 
@@ -54,14 +54,16 @@ python main.py
 
 ### 1. 插图下载失败
 
-如果下载小说时出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='pic.wenku8.com', port=443)`这样的报错信息，那可能是本地网络环境问题。
+出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='pic.wenku8.com', port=443)`
+
+**原因：**可能是本地网络环境问题。
 
 **解决：**
 
 使用cloudflare workers反代`pic.wenku8.com`。
 
 - 新建一个cloudflare workers；
-- 部署。编辑代码，将下面代码粘贴进去后部署。
+- 部署。编辑代码，将下面代码粘贴进去后部署；
 
 ```js
 const host = "pic.wenku8.com";
@@ -82,6 +84,16 @@ async function handleRequest(request) {
 ```
 
 - 将反代的网址粘贴到  main.py的 wenkupic_proxy_host变量处，如`wenkupic_proxy_host = xxxx.xxxxx.workers.dev`
+
+### 2. Access denied
+
+出现`Access denied | www.wenku8.net used Cloudflare to restrict access`。
+
+**原因：**访问过于频繁，请求受限。
+
+**解决：**增加请求延迟，自定义参数增加`sleep_time`的值。
+
+
 
 
 

@@ -57,18 +57,18 @@ class Wenku8Download:
         self._get_toc()
         self._save_cover()
 
-    @delay_time
-    def _request(self, url):
-        res = self._s.get(url)  # 修改这里
-        return res.content.decode('gbk')
 
+    @delay_time
     def _get_detail(self, book_id):
         """获取书籍详情页内容，收集元数据"""
         self.book['api']['detail'] = self._api['detail'].format(book_id=book_id)
-        html_text = self._request(self.book['api']['detail'])
-        if '错误原因' in html_text:
-            error_msg_idx = html_text.find('错误原因：')
-            self.error_msg = html_text[error_msg_idx: html_text.find('<br', error_msg_idx)]
+        res = self._s.get(self.book['api']['detail'])
+        html_text = res.content.decode('gbk')
+        if res.status_code != 200:
+            if '错误原因' in html_text:
+                self._get_error_msg(html_text, '错误原因', '<br')
+            else:
+                self.error_msg = 'Unknow error.'
             return
 
         html = etree.HTML(html_text)
@@ -96,9 +96,10 @@ class Wenku8Download:
         description = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[2]/span[6]/text()')
         if description: self.book['description'] = '\n'.join([desp.strip() for desp in description])
 
+    @delay_time
     def _get_toc(self):
         """获取目录"""
-        html_text = self._request(self.book['api']['toc'])
+        html_text = self._s.get(self.book['api']['toc']).content.decode('gbk')
 
         html = etree.HTML(html_text)
         toc_nodes = html.xpath('/html/body/table/tr')
@@ -116,14 +117,22 @@ class Wenku8Download:
                         chapter_title = td.xpath('a/text()')[0]
                         volume['chapter'].append((chapter_title, chapter_href))
 
+    @delay_time
     def get_chapter(self, href):
         """获取章节内容，返回章节内容"""
         chapter_url = self.book['api']['toc'].replace('index.htm', href)
-        html_text = self._request(chapter_url)
-        if '因版权问题' in html_text:
-            error_msg_idx = html_text.find('因版权问题')
-            self.error_msg = html_text[error_msg_idx: html_text.find('<br', error_msg_idx)]
-            return (None, None, None)
+        res = self._s.get(chapter_url)
+        html_text = res.content.decode('gbk')
+
+        if res.status_code != 200:
+            error_list = [('因版权问题', '<br'), ('Access denied', '</')]
+            for error in error_list:
+                if error[0] in html_text:
+                    self._get_error_msg(html_text, error[0], error[1])
+                    return (None, None, None)
+            self.error_msg = 'Unknow error.'
+            print('Error HTML:', html_text)
+            return(None, None, None)
 
         html = etree.HTML(html_text)
         content_title = html.xpath('//*[@id="title"]/text()')
@@ -170,6 +179,12 @@ class Wenku8Download:
             if file_name not in self.src_white_list:
                 file_path = os.path.join(src_dir, file_name)
                 if os.path.isfile(file_path): os.remove(file_path)
+
+    def _get_error_msg(self, html_text, start_text, end_text):
+        """从html_text中提取报错信息"""
+        error_msg_idx = html_text.find(start_text)
+        self.error_msg = html_text[error_msg_idx: html_text.find(end_text, error_msg_idx)]
+
 
 
 if __name__ == '__main__':
