@@ -132,16 +132,16 @@ class Wenku8Download:
 
         html = etree.HTML(html_text)
         content_title = html.xpath('//*[@id="title"]/text()')
-        if content_title: content_title = content_title[0]
+        content_title = content_title[0] if content_title else ''
 
-        content = ''
-        image_urls = []
-
-        content_nodes = html.xpath('//*[@id="content"]')[0]
-        content_list = [nodes.strip() for nodes in content_nodes.xpath('text()') if nodes.strip()]
-        if not len(content_list): #插图页
-            image_nodes = content_nodes.xpath('//*[@class="divimage"]')
-            image_urls = [div.xpath('a/@href')[0].replace('http://', 'https://') for div in image_nodes]
+        image_urls, content_list = [], []
+        content_nodes = html.xpath('//*[@id="content"]')
+        if content_nodes:
+            content_nodes = content_nodes[0]
+            content_list = [nodes.strip() for nodes in content_nodes.xpath('text()') if nodes.strip()]
+            if not len(content_list): #插图页
+                image_nodes = content_nodes.xpath('//*[@class="divimage"]')
+                image_urls = [div.xpath('a/@href')[0].replace('http://', 'https://') for div in image_nodes]
         return (content_title, content_list, image_urls)
 
 
@@ -160,15 +160,15 @@ class Wenku8Download:
         if proxy_host: img_url = img_url.replace(urlparse(img_url).hostname, proxy_host)
         res = self._s.get(img_url)
         self.image_idx += 1
-        file_name = '{:0>3d}.jpg'.format(self.image_idx)
+        file_base = '{:0>3d}'.format(self.image_idx)
+        file_name = file_base + '.jpg'
+        file_path = 'src/' + file_name
         if res.status_code == 200:
-            file_dir = 'src/'
-            with open(file_dir + file_name, 'wb') as f:
+            with open(file_path, 'wb') as f:
                 f.write(res.content)
-            file_base, _ = os.path.splitext(file_name)
-            return (file_dir + file_name, file_name, file_base)
+            return (file_path, file_name, file_base)
         else:
-            return (None, None, None)
+            return (file_path, None, None)
 
 
     def clear_src(self):

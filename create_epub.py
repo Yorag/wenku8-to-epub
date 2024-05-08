@@ -4,14 +4,15 @@
 import os
 import uuid
 # from datetime import datetime
+import warnings
 
 from ebooklib import epub
 
 
 
-XML_TITLE_tag = '<h1>{ct}</h1><br>'
-XML_PARAGRAPH_tag = '<p>{p}</p>'
-XML_IMAGE_tag = '''<div class="illus duokan-image-single img">
+XML_TITLE_LABEL = '<h1>{ct}</h1><br/>'
+XML_PARAGRAPH_LABEL = '<p>{p}</p><br/>'
+XML_IMAGE_LABEL = '''<div class="illus duokan-image-single img">
 <img alt="{fb}" src="../Images/{fn}"/>
 </div>'''
 
@@ -102,7 +103,9 @@ class Epub:
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
         epub_path = os.path.join(epub_dir, self.title + '.epub')
-        epub.write_epub(epub_path, self.book)
+        with warnings.catch_warnings(record=True): #忽略 UserWarning: Duplicate name 警告信息
+            warnings.simplefilter('ignore', category=UserWarning)
+            epub.write_epub(epub_path, self.book)
 
 
     def _set_toc(self):

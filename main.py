@@ -4,14 +4,18 @@
 import os
 import sys
 
-from create_epub import Epub, XML_TITLE_tag, XML_PARAGRAPH_tag, XML_IMAGE_tag
+from create_epub import Epub, XML_TITLE_LABEL, XML_PARAGRAPH_LABEL, XML_IMAGE_LABEL
 from wenku8 import Wenku8Download
 #-------------------------
 
 # xxxx.xxxx.workers.dev 或 自定义域名
-wenkupic_proxy_host = 'wenku-img.jsone.gq'
+wenkupic_proxy_host = 'wk8-test.jsone.gq'
 
-save_epub_dir = 'epub/'
+# epub存储目录（相对路径/绝对路径）
+save_epub_dir = 'epub'
+
+# 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
+is_set_cover = True
 #-------------------------
 
 
@@ -36,8 +40,7 @@ if __name__ == '__main__':
 
         book_epub = Epub()
         book_epub.set_metadata(book_title, author=wk.book['author'], desp=wk.book['description'],
-                               publisher=wk.book['publisher'], source_url=wk.book['api']['detail'],
-                               tag_list=wk.book['tags'],
+                               publisher=wk.book['publisher'], source_url=wk.book['api']['detail'], tag_list=wk.book['tags'],
                                cover_path='src/cover.jpg', vol_idx=vol_idx)
 
         print('start making volume:', book_title)
@@ -46,21 +49,26 @@ if __name__ == '__main__':
             if wk.error_msg: print(wk.error_msg); sys.exit(0)
 
             # 设置HTML格式
-            html_body = XML_TITLE_tag.format(ct=content_title)
+            html_body = XML_TITLE_LABEL.format(ct=content_title)
             if content_list:
                 print('├──', 'start downloading chapter-text:', chapter_title)
                 for p in content_list:
-                    html_body += XML_PARAGRAPH_tag.format(p=p)
+                    html_body += XML_PARAGRAPH_LABEL.format(p=p)
                 print('│   └── download chapter-text completed.')
-            else:
+            elif image_urls:
                 print('├──', 'start downloading chapter-image:', chapter_title)
                 for img_url in image_urls:
                     file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
                     if file_name:
+                        if is_set_cover and img_url == image_urls[0]: # 将插图的第一张图片作为封面
+                            with open(file_path, 'rb') as f:
+                                book_epub.book.set_cover('Images/cover.jpg', f.read())
                         book_epub.set_images(file_path)
-                        html_body += XML_IMAGE_tag.format(fb=file_base, fn=file_name)
-                    print('│   ├──', img_url, 'success' if file_name else 'fail')
+                        html_body += XML_IMAGE_LABEL.format(fb=file_base, fn=file_name)
+                    print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
                 print('│   └── download chapter-image completed.')
+            else:
+                print('│   └── downloaded empty chapter.')
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
 
         book_epub.pack_book(save_epub_dir)
