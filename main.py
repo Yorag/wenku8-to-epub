@@ -9,17 +9,15 @@ from wenku8 import Wenku8Download
 
 
 #--------自定义参数------------
-# 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
-wenkupic_proxy_host = 'wk8-test.jsone.gq'
 
 # epub存储目录（相对路径/绝对路径）
 save_epub_dir = 'epub'
-
-# 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
-use_divimage_set_cover = True
-
 # 每次网络请求后停顿时间，避免封IP
 sleep_time = 1
+# 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
+use_divimage_set_cover = True
+# 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
+wenkupic_proxy_host = 'wk8-test.jsone.gq'
 #---------------------------
 
 
@@ -48,6 +46,7 @@ if __name__ == '__main__':
         volume_idx_list = list(map(lambda i: i+1, range(len(wk.book['toc']))))
     else:
         print('volume_id is valid.'); sys.exit(0)
+    print()
 
     vol_idx = 0
     for it in wk.book['toc']:
@@ -63,7 +62,7 @@ if __name__ == '__main__':
                                tag_list=wk.book['tags'], vol_idx=vol_idx,
                                cover_path='src/cover.jpg' if not use_divimage_set_cover else None)
 
-        print('\nStart making volume:', wk.book['title'], it['volume'])
+        print('Start making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
             content_title, content_list, image_urls = wk.get_chapter(chapter_href)
             if wk.error_msg: print(wk.error_msg); sys.exit(0)
