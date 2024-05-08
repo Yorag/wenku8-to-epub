@@ -51,9 +51,12 @@ class Epub:
         self.book.add_metadata('DC', 'belongs-to-collection', self.title.split()[0])
 
         # 适配calibre数据
-        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:title_sort', 'content': full_title})
-        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series', 'content': title})
-        if vol_idx: self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series_index', 'content': str(vol_idx)})
+        self.book.add_metadata(None, 'meta', None,
+                               {'name': 'calibre:title_sort', 'content': full_title})
+        self.book.add_metadata(None, 'meta', None,
+                               {'name': 'calibre:series', 'content': title})
+        if vol_idx: self.book.add_metadata(None, 'meta', None,
+                                           {'name': 'calibre:series_index', 'content': str(vol_idx)})
 
 
     def _set_style(self, css_file_path='src/style.css'):
@@ -134,23 +137,23 @@ if __name__ == '__main__':
 
     book.set_metadata("测试 第一卷", author="Yorag", desp="介绍内容")
     book.set_html('第一章 01',
-        '<h1>第一章 01</h1><p>Introduction paragraph.</p><p>Introduction paragraph.</p><p>Introduction paragraph.</p>',
+        '<h1>第一章 01</h1><p>Introduction paragraph.</p>',
         '第一章'
         )
     book.set_html('第一章 02',
-        '<h1>第一章 02</h1><p>Introduction paragraph.</p><p>Introduction paragraph.</p><p>Introduction paragraph.</p>',
+        '<h1>第一章 02</h1><p>Introduction paragraph.</p>',
         '第一章'
         )
     book.set_html('第二章 01',
-        '<h1>第二章 01</h1><p>Introduction paragraph.</p><p>Introduction paragraph.</p><p>Introduction paragraph.</p>',
+        '<h1>第二章 01</h1><p>Introduction paragraph.</p>',
         '第二章'
         )
     book.set_html('第二章 02',
-        '<h1>第二章 02</h1><p>Introduction paragraph.</p><p>Introduction paragraph.</p><p>Introduction paragraph.</p>',
+        '<h1>第二章 02</h1><p>Introduction paragraph.</p>',
         '第二章'
         )
     book.set_html('第三章',
-        '<h1>第三章</h1><p>Introduction paragraph.</p><p>Introduction paragraph.</p><p>Introduction paragraph.</p>'
+        '<h1>第三章</h1><p>Introduction paragraph.</p>'
         )
 
 

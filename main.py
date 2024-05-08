@@ -44,8 +44,8 @@ if __name__ == '__main__':
 
         book_epub = Epub()
         book_epub.set_metadata(wk.book['title'], it['volume'],author=wk.book['author'], desp=wk.book['description'],
-                               publisher=wk.book['publisher'], source_url=wk.book['api']['detail'], tag_list=wk.book['tags'],
-                               cover_path='src/cover.jpg', vol_idx=vol_idx)
+                               publisher=wk.book['publisher'], source_url=wk.book['api']['detail'],
+                               tag_list=wk.book['tags'], cover_path='src/cover.jpg', vol_idx=vol_idx)
 
         print('Start making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
@@ -76,6 +76,7 @@ if __name__ == '__main__':
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
 
         book_epub.pack_book(save_epub_dir)
-        wk.clear_src()
         print('└── Packing volume completed.\n')
+
+        wk.clear_src()
 
