@@ -37,9 +37,23 @@ if __name__ == '__main__':
 
     print('\nLight Noval Title:', wk.book['title'], '\n')
 
+    # 单独下载某一/些卷
+    volume_toc = '\n'.join([str(i+1) + ': ' + it['volume'] for i,it in enumerate(wk.book['toc'])])
+    print(volume_toc)
+    volume_idx_list = input('输入要下载的卷索引，下载多卷用空格分割（默认0，逐卷下载）：').split()
+    # 检查输入索引是否合法
+    if volume_idx_list and all(map(lambda i: i.isdigit() and (1 <= int(i) <= len(wk.book['toc'])), volume_idx_list)):
+        volume_idx_list = sorted(map(int, volume_idx_list))
+    elif volume_idx_list == [] or '0' in volume_idx_list:
+        volume_idx_list = list(map(lambda i: i+1, range(len(wk.book['toc']))))
+    else:
+        print('volume_id is valid.'); sys.exit(0)
+
     vol_idx = 0
     for it in wk.book['toc']:
         vol_idx += 1
+        if vol_idx not in volume_idx_list: continue
+
         wk.image_idx = 0
         is_set_cover = not use_divimage_set_cover
 
@@ -49,7 +63,7 @@ if __name__ == '__main__':
                                tag_list=wk.book['tags'], vol_idx=vol_idx,
                                cover_path='src/cover.jpg' if not use_divimage_set_cover else None)
 
-        print('Start making volume:', wk.book['title'], it['volume'])
+        print('\nStart making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
             content_title, content_list, image_urls = wk.get_chapter(chapter_href)
             if wk.error_msg: print(wk.error_msg); sys.exit(0)
