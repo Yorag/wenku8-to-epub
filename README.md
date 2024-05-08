@@ -47,6 +47,8 @@ python main.py
 | `use_divimage_set_cover` | `True` | 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面   |
 | `wenkupic_proxy_host`    | `None` | 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名 |
 
+> 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效性。
+
 
 
 ## 常见问题
