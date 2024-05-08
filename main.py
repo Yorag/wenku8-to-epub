@@ -34,16 +34,15 @@ if __name__ == '__main__':
 
     vol_idx = 0
     for it in wk.book['toc']:
-        book_title = wk.book['title'] + ' ' + it['volume']
         vol_idx += 1
         wk.image_idx = 0
 
         book_epub = Epub()
-        book_epub.set_metadata(book_title, author=wk.book['author'], desp=wk.book['description'],
+        book_epub.set_metadata(wk.book['title'], it['volume'],author=wk.book['author'], desp=wk.book['description'],
                                publisher=wk.book['publisher'], source_url=wk.book['api']['detail'], tag_list=wk.book['tags'],
                                cover_path='src/cover.jpg', vol_idx=vol_idx)
 
-        print('Start making volume:', book_title)
+        print('Start making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
             content_title, content_list, image_urls = wk.get_chapter(chapter_href)
             if wk.error_msg: print(wk.error_msg); sys.exit(0)

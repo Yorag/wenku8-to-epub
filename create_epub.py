@@ -27,9 +27,10 @@ class Epub:
         #设置style.css
         self._set_style()
 
-    def set_metadata(self, title, author=None, lang='zh', desp=None, date=None,
+    def set_metadata(self, title, volume_title=None, author=None, lang='zh', desp=None, date=None,
                 publisher=None, source_url=None, tag_list=[], cover_path=None, vol_idx:int=None):
-        self.title = title
+        full_title = title + (' ' + volume_title if volume_title else '')
+        self.title = full_title
         '''设置epub元数据'''
         self.book_uuid = str(uuid.uuid4())
         self.book.set_identifier(self.book_uuid)
@@ -50,9 +51,9 @@ class Epub:
         self.book.add_metadata('DC', 'belongs-to-collection', self.title.split()[0])
 
         # 适配calibre数据
-        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:title_sort','content': title})
-        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series','content': title.split()[0]})
-        if vol_idx: self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series_index','content': str(vol_idx)})
+        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:title_sort', 'content': full_title})
+        self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series', 'content': title})
+        if vol_idx: self.book.add_metadata(None, 'meta', None, {'name': 'calibre:series_index', 'content': str(vol_idx)})
 
 
     def _set_style(self, css_file_path='src/style.css'):
