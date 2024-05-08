@@ -1,28 +1,28 @@
-## wenku8-epub：
+# wenku8-epub：
 
 [轻小说文库](https://www.wenku8.net)在线小说转epub
 
 
 
-### 项目简介
+## 项目简介
 
-#### 1. 功能
+### 1. 功能
 
 - **按卷下载**小说各部分章节（含插图页）并封装至epub
-  - 支持填充小说元数据（标题、作者、介绍、出版商、标签、封面）
-    - 还支持calibre自有元数据（丛书、丛书编号）
 
+- 支持填充小说元数据（标题、作者、介绍、出版商、标签、封面）
+  - 支持calibre自有元数据（丛书series、丛书编号series_index）
 - 支持小说目录自动生成
 
 > 所有数据源自[轻小说文库](https://www.wenku8.net/)。
 
-#### 2. 功能演示
+### 2. 功能演示
 
 ![image-20240507193808727](./assets/image-20240507193808727.png)
 
 
 
-### 运行项目
+## 运行项目
 
 在运行前需要安装依赖包
 
@@ -36,13 +36,13 @@ pip install -r requirements
 python main.py
 ```
 
-输入要下载的book_id，等待下载结束，epub保存目录就在`epub`文件夹下
+输入要下载的book_id，等待下载结束，epub保存在`epub`文件夹下
 
 
 
-### 常见问题
+## 常见问题
 
-#### 1. 插图下载
+### 1. 插图下载
 
 如果下载小说时出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='pic.wenku8.com', port=443)`这样的报错信息，那可能是本地网络环境问题。
 
@@ -78,7 +78,7 @@ async function handleRequest(request) {
 
 
 
-### 其他说明
+## 其他说明
 
 - 同一系列的不同卷用的还是同一组元数据（介绍、封面），所以目前用书名区分各卷
 - 目测轻小说文库的小说目录只有两级`卷 -> 章`，所以分卷下载时不考虑分级（卷内全都是一级目录）

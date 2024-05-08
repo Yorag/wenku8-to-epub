@@ -9,9 +9,9 @@ from ebooklib import epub
 
 
 
-XML_TITLE_LABEL = '<h4 class="pius1">{ct}</h4><br>'
-XML_PARAGRAPH_LABEL = '<p>{p}</p>'
-XML_IMAGE_LABEL = '''<div class="illus duokan-image-single img">
+XML_TITLE_tag = '<h1>{ct}</h1><br>'
+XML_PARAGRAPH_tag = '<p>{p}</p>'
+XML_IMAGE_tag = '''<div class="illus duokan-image-single img">
 <img alt="{fb}" src="../Images/{fn}"/>
 </div>'''
 
@@ -27,7 +27,7 @@ class Epub:
         self._set_style()
 
     def set_metadata(self, title, author=None, lang='zh', desp=None, date=None,
-                publisher=None, source_url=None, label_list=[], cover_path=None, vol_idx:int=None):
+                publisher=None, source_url=None, tag_list=[], cover_path=None, vol_idx:int=None):
         self.title = title
         '''设置epub元数据'''
         self.book_uuid = str(uuid.uuid4())
@@ -44,8 +44,8 @@ class Epub:
         self.book.add_metadata('DC', 'publisher', publisher)
         self.book.add_metadata('DC', 'creator', author)
         self.book.add_metadata('DC', 'source', source_url)
-        for label in label_list:
-            self.book.add_metadata('DC', 'subject', label)
+        for tag in tag_list:
+            self.book.add_metadata('DC', 'subject', tag)
         self.book.add_metadata('DC', 'belongs-to-collection', self.title.split()[0])
 
         # 适配calibre数据

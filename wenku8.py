@@ -29,7 +29,7 @@ class Wenku8Download:
             'author': '',
             'status': '', #ongoing、completed
             'cover_url': '',
-            'labels': [],
+            'tags': [],
             'description': '',
             'toc': [],  #[{'volume': '','chapter': []}]
             'api': {} #即self.api
@@ -58,7 +58,6 @@ class Wenku8Download:
         if self.error_msg: return
         self._get_toc()
         self._save_cover()
-
 
 
     @delay_time
@@ -94,8 +93,8 @@ class Wenku8Download:
         cover_node = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[1]/img/@src')
         if cover_node: self.book['cover_url'] = cover_node[0]
 
-        labels = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[2]/span[1]/b/text()')
-        if labels: self.book['labels'] = labels[0].strip().lstrip('作品Tags：').split()
+        tags = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[2]/span[1]/b/text()')
+        if tags: self.book['tags'] = tags[0].strip().lstrip('作品Tags：').split()
 
         description = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[2]/span[6]/text()')
         if description: self.book['description'] = '\n'.join([desp.strip() for desp in description])
