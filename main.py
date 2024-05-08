@@ -55,7 +55,7 @@ if __name__ == '__main__':
             if wk.error_msg: print(wk.error_msg); sys.exit(0)
 
             # 设置HTML格式
-            html_body = XML_TITLE_LABEL.format(ct=content_title)
+            html_body = XML_TITLE_LABEL.format(ct=chapter_title)
             if content_list:
                 print('├──', 'Start downloading chapter-text:', chapter_title)
                 for p in content_list:
