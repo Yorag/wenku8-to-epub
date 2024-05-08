@@ -4,7 +4,6 @@
 import os
 import uuid
 # from datetime import datetime
-import warnings
 
 from ebooklib import epub
 
@@ -28,18 +27,16 @@ class Epub:
         self._set_style()
 
     def set_metadata(self, title, volume_title=None, author=None, lang='zh', desp=None, date=None,
-                publisher=None, source_url=None, tag_list=[], cover_path=None, vol_idx: int=None):
+                publisher=None, source_url=None, tag_list=[], vol_idx: int=None, cover_path=None):
         full_title = title + (' ' + volume_title if volume_title else '')
         self.title = full_title
         '''设置epub元数据'''
         self.book_uuid = str(uuid.uuid4())
         self.book.set_identifier(self.book_uuid)
-        self.book.set_title(title)
+        self.book.set_title(full_title)
         self.book.set_language(lang)
         self.book.add_author(author)
-        if cover_path:
-            with open(cover_path, 'rb') as f:
-                self.book.set_cover('Images/cover.jpg', f.read())
+        if cover_path: self.set_cover(cover_path)
 
         self.book.add_metadata('DC', 'description', desp)
         # self.book.add_metadata('DC', 'date', date if date else datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -57,6 +54,14 @@ class Epub:
                                {'name': 'calibre:series', 'content': title})
         if vol_idx: self.book.add_metadata(None, 'meta', None,
                                            {'name': 'calibre:series_index', 'content': str(vol_idx)})
+
+
+    def set_cover(self, cover_path):
+        """设置封面"""
+        with open(cover_path, 'rb') as f:
+            self.book.set_cover('Images/cover.jpg', f.read())
+        # 将cover.xhtml在spine中按序排列
+        self.book.get_item_with_id('cover').is_linear = True
 
 
     def _set_style(self, css_file_path='src/style.css'):
@@ -107,9 +112,7 @@ class Epub:
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
         epub_path = os.path.join(epub_dir, self.title + '.epub')
-        with warnings.catch_warnings(record=True): # 忽略 UserWarning: Duplicate name 警告信息
-            warnings.simplefilter('ignore', category=UserWarning)
-            epub.write_epub(epub_path, self.book)
+        epub.write_epub(epub_path, self.book)
 
 
     def _set_toc(self):
@@ -122,7 +125,7 @@ class Epub:
             
 
     def _set_spine(self):
-        self.book.spine = ['nav']
+        self.book.spine = ['cover', 'nav']
         elem_list = []
         for c in self.chapters:
             if isinstance(c['chapter'], epub.EpubHtml): elem_list.append(c['chapter'])
@@ -135,7 +138,7 @@ class Epub:
 if __name__ == '__main__':
     book = Epub()
 
-    book.set_metadata("测试 第一卷", author="Yorag", desp="介绍内容")
+    book.set_metadata("测试 第一卷", author="Yorag", desp="介绍内容", cover_path="src/cover.jpg")
     book.set_html('第一章 01',
         '<h1>第一章 01</h1><p>Introduction paragraph.</p>',
         '第一章'

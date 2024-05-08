@@ -16,7 +16,7 @@ wenkupic_proxy_host = 'wk8-test.jsone.gq'
 save_epub_dir = 'epub'
 
 # 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
-is_set_cover = True
+use_divimage_set_cover = True
 
 # 每次网络请求后停顿时间，避免封IP
 sleep_time = 1
@@ -41,11 +41,13 @@ if __name__ == '__main__':
     for it in wk.book['toc']:
         vol_idx += 1
         wk.image_idx = 0
+        is_set_cover = not use_divimage_set_cover
 
         book_epub = Epub()
         book_epub.set_metadata(wk.book['title'], it['volume'],author=wk.book['author'], desp=wk.book['description'],
                                publisher=wk.book['publisher'], source_url=wk.book['api']['detail'],
-                               tag_list=wk.book['tags'], cover_path='src/cover.jpg', vol_idx=vol_idx)
+                               tag_list=wk.book['tags'], vol_idx=vol_idx,
+                               cover_path='src/cover.jpg' if not use_divimage_set_cover else None)
 
         print('Start making volume:', wk.book['title'], it['volume'])
         for chapter_title, chapter_href in it['chapter']:
@@ -64,9 +66,9 @@ if __name__ == '__main__':
                 for img_url in image_urls:
                     file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
                     if file_name:
-                        if is_set_cover and img_url == image_urls[0]: # 将插图的第一张图片作为封面
-                            with open(file_path, 'rb') as f:
-                                book_epub.book.set_cover('Images/cover.jpg', f.read())
+                        if use_divimage_set_cover and img_url == image_urls[0]: # 将插图的第一张图片作为封面
+                            book_epub.set_cover(file_path)
+                            is_set_cover = True
                         book_epub.set_images(file_path)
                         html_body += XML_IMAGE_LABEL.format(fb=file_base, fn=file_name)
                     print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
@@ -74,6 +76,9 @@ if __name__ == '__main__':
             else:
                 print('│   └── Downloaded empty chapter.')
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
+
+        if not is_set_cover: # 插图第一张图片未能设置为封面，就把缩略图作为封面
+            book_epub.set_cover('src/cover.jpg')
 
         book_epub.pack_book(save_epub_dir)
         print('└── Packing volume completed.\n')
