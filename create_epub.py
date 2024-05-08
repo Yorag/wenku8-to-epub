@@ -21,14 +21,14 @@ class Epub:
     def __init__(self):
         self.book = epub.EpubBook()
         self.title = None
-        self.chapters = [] #[{'chapter': '','pages': []}, {'chapter': ''}, ...]
-        self.current_page_idx = 0 #记录设置到第几页了
+        self.chapters = [] # [{'chapter': '','pages': []}, {'chapter': ''}, ...]
+        self.current_page_idx = 0 # 记录设置到第几页了
 
-        #设置style.css
+        # 设置style.css
         self._set_style()
 
     def set_metadata(self, title, volume_title=None, author=None, lang='zh', desp=None, date=None,
-                publisher=None, source_url=None, tag_list=[], cover_path=None, vol_idx:int=None):
+                publisher=None, source_url=None, tag_list=[], cover_path=None, vol_idx: int=None):
         full_title = title + (' ' + volume_title if volume_title else '')
         self.title = full_title
         '''设置epub元数据'''
@@ -57,7 +57,7 @@ class Epub:
 
 
     def _set_style(self, css_file_path='src/style.css'):
-        '''设置css文件'''
+        """设置css文件"""
         with open(css_file_path, 'r', encoding='utf-8') as f:
             style_data = f.read()
         css = epub.EpubItem(uid='style_nav', file_name='Styles/style.css', media_type='text/css', content=style_data)
@@ -65,7 +65,7 @@ class Epub:
 
 
     def set_html(self, page_title, page_content, chapter_title=None, lang='zh'):
-        '''设置章节内容，xhtml格式'''
+        """设置章节内容，xhtml格式"""
         self.current_page_idx += 1
         file_name = 'Text/page-{}.xhtml'.format(self.current_page_idx)
         cont = epub.EpubHtml(title=page_title, file_name=file_name, lang=lang)
@@ -74,18 +74,18 @@ class Epub:
         cont.set_content(page_content.encode('utf-8'))
         self.book.add_item(cont)
         # 将该页内容追加到对应卷
-        if chapter_title: #有二级目录
+        if chapter_title: # 有二级目录
             for it in self.chapters:
                 if it['chapter'].title == chapter_title:
                     it['pages'].append(cont)
                     return
             self.chapters.append({ 'chapter': epub.Section(chapter_title), 'pages': [cont] })
-        else: #无二级目录
+        else: # 无二级目录
             self.chapters.append({ 'chapter': cont })
 
 
     def set_images(self, file_path):
-        '''设置图片对象'''
+        """设置图片对象"""
         _, file_name = os.path.split(file_path)
         file_base, file_ext = os.path.splitext(file_name)
         with open(file_path, 'rb') as f:
@@ -97,20 +97,20 @@ class Epub:
 
 
     def pack_book(self, epub_dir=''):
-        '''打包epub'''
+        """打包epub"""
         self._set_toc()
         self._set_spine()
         # 添加目录信息
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
         epub_path = os.path.join(epub_dir, self.title + '.epub')
-        with warnings.catch_warnings(record=True): #忽略 UserWarning: Duplicate name 警告信息
+        with warnings.catch_warnings(record=True): # 忽略 UserWarning: Duplicate name 警告信息
             warnings.simplefilter('ignore', category=UserWarning)
             epub.write_epub(epub_path, self.book)
 
 
     def _set_toc(self):
-        '''设置目录文件。需要在设置完所有html后设置'''
+        """设置目录文件。需要在设置完所有html后设置"""
         toc_list = []
         for it in self.chapters:
             if it.get('pages'): toc_list.append((it['chapter'], it['pages']))
