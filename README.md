@@ -24,7 +24,7 @@
 在运行前需要安装依赖包：
 
 ```python
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 请确保工作目录是项目根目录，然后在终端输入以下指令：
@@ -56,7 +56,7 @@ python main.py
 
 出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='pic.wenku8.com', port=443)`
 
-**原因：**可能是本地网络环境问题。
+**原因：** 可能是本地网络环境问题。
 
 **解决：**
 
@@ -89,9 +89,9 @@ async function handleRequest(request) {
 
 出现`Access denied | www.wenku8.net used Cloudflare to restrict access`。
 
-**原因：**访问过于频繁，请求受限。
+**原因：** 访问过于频繁，请求受限。
 
-**解决：**增加请求延迟，自定义参数增加`sleep_time`的值。
+**解决：** 增加请求延迟，自定义参数增加`sleep_time`的值。
 
 
 

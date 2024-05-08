@@ -10,7 +10,7 @@ from create_epub import Epub, XML_TITLE_LABEL, XML_PARAGRAPH_LABEL, XML_IMAGE_LA
 from wenku8 import Wenku8Download
 
 
-#--------自定义参数------------
+# --------自定义参数------------
 
 # epub存储目录（相对路径/绝对路径）
 save_epub_dir = 'epub'
@@ -20,25 +20,21 @@ sleep_time = 2
 use_divimage_set_cover = True
 # 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
 wenkupic_proxy_host = 'wk8-test.jsone.gq'
-#---------------------------
+# ---------------------------
 
 
 
 if not os.path.exists(save_epub_dir):
     os.makedirs(save_epub_dir)
 
-if __name__ == '__main__':
-    book_id = input('输入要下载的小说id（如 https://www.wenku8.net/book/2906.htm 的id是2906）：')
-    print()
-    if not book_id.isdigit(): print('Error: book_id is valid.'); sys.exit(0)
 
-    wk = Wenku8Download(book_id)
-    if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
-    wk.sleep_time = sleep_time # 设置延迟时间
 
-    print('Light Noval Title:', wk.book['title'], '\n')
+def whole_book_download():
+    """整本下载"""
+    pass
 
-    # 单独下载某一/些卷
+def volume_by_volume_download():
+    """按卷下载，单独下载某一/些卷"""
     volume_toc = '\n'.join([str(i+1) + ': ' + it['volume'] for i,it in enumerate(wk.book['toc'])])
     print(volume_toc)
     volume_idx_list = input('输入要下载的卷索引，下载多卷用空格分割（默认0，逐卷下载）：').split()
@@ -104,3 +100,17 @@ if __name__ == '__main__':
 
         wk.clear_src()
 
+
+
+if __name__ == '__main__':
+    book_id = input('输入要下载的小说id（如 https://www.wenku8.net/book/2906.htm 的id是2906）：')
+    print()
+    if not book_id.isdigit(): print('Error: book_id is valid.'); sys.exit(0)
+
+    wk = Wenku8Download(book_id)
+    if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
+    wk.sleep_time = sleep_time # 设置延迟时间
+
+    print('Light Noval Title:', wk.book['title'], '\n')
+
+    volume_by_volume_download()
