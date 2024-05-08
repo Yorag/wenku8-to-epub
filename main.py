@@ -6,9 +6,10 @@ import sys
 
 from create_epub import Epub, XML_TITLE_LABEL, XML_PARAGRAPH_LABEL, XML_IMAGE_LABEL
 from wenku8 import Wenku8Download
-#-------------------------
 
-# xxxx.xxxx.workers.dev 或 自定义域名
+
+#--------自定义参数------------
+# 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
 wenkupic_proxy_host = 'wk8-test.jsone.gq'
 
 # epub存储目录（相对路径/绝对路径）
@@ -16,12 +17,16 @@ save_epub_dir = 'epub'
 
 # 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
 is_set_cover = True
-#-------------------------
+
+# 每次网络请求后停顿时间，避免封IP
+sleep_time = 1
+#---------------------------
+
+
 
 
 if not os.path.exists(save_epub_dir):
     os.makedirs(save_epub_dir)
-
 
 if __name__ == '__main__':
     book_id = input('输入要下载的小说id（如 https://www.wenku8.net/book/2906.htm 的id是2906）：')
@@ -29,6 +34,7 @@ if __name__ == '__main__':
 
     wk = Wenku8Download(book_id)
     if wk.error_msg: print(wk.error_msg); sys.exit(0)
+    wk.sleep_time = sleep_time # 设置延迟时间
 
     print('\nLight Noval Title:', wk.book['title'], '\n')
 

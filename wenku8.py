@@ -9,14 +9,13 @@ import requests
 from lxml import etree
 
 
-sleep_time = 1 #每次网络请求后停顿时间，避免封IP
 
 
 def delay_time(func):
-    '''装饰器，给带有网络请求的函数追加延时'''
-    def wrapper(*args, **kwargs):
-        ret = func(*args, **kwargs)
-        time.sleep(sleep_time)
+    '''类成员函数装饰器，给带有网络请求的函数追加延时'''
+    def wrapper(self, *args, **kwargs):
+        ret = func(self, *args, **kwargs)
+        time.sleep(self.sleep_time)
         return ret
     return wrapper
 
@@ -46,6 +45,7 @@ class Wenku8Download:
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0'
         })
         self.image_idx = 0
+        self.sleep_time = 1  # 默认网络请求停顿时间1s
         # 错误信息
         self.error_msg = ''
 
