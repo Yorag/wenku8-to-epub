@@ -1,4 +1,4 @@
-# wenku8-epub
+# wenku8-to-epub
 
 [轻小说文库](https://www.wenku8.net)在线小说转epub
 
