@@ -17,7 +17,7 @@
 
 ### 2. 功能演示
 
-![按卷下载](./screenshot/image-20240509114156879.png)
+![分卷下载](./screenshot/image-20240510170318408.png)
 
 ![整本下载](./screenshot/image-20240509114425897.png)
 

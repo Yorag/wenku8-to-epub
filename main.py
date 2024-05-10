@@ -25,7 +25,7 @@ wenkupic_proxy_host = 'wk8-test.jsone.gq'
 
 
 
-is_set_cover = not use_divimage_set_cover
+is_set_cover = not use_divimage_set_cover # 记录是否已设置过封面
 
 if not os.path.exists(save_epub_dir):
     os.makedirs(save_epub_dir)
@@ -93,8 +93,7 @@ def whole_book_download():
 
 def volume_by_volume_download():
     """按卷下载，单独下载某一/些卷"""
-    volume_toc = '\n'.join([str(i+1) + ': ' + it['volume'] for i,it in enumerate(wk.book['toc'])])
-    print(volume_toc)
+    print_format([it['volume'] for it in wk.book['toc']])
     volume_idx_list = input('输入要下载的卷索引，下载多卷用空格分割（默认0，逐卷下载）：').split(); print()
     # 检查输入索引是否合法
     if volume_idx_list and all(map(lambda i: i.isdigit() and (1 <= int(i) <= len(wk.book['toc'])), volume_idx_list)):
@@ -102,7 +101,7 @@ def volume_by_volume_download():
     elif volume_idx_list == [] or '0' in volume_idx_list:
         volume_idx_list = list(map(lambda i: i+1, range(len(wk.book['toc']))))
     else:
-        print('volume_id is valid.'); return
+        print('Error: volume_id is valid.'); return
 
     vol_idx = 0
     for it in wk.book['toc']:
@@ -127,6 +126,30 @@ def volume_by_volume_download():
         book_epub.pack_book(save_epub_dir)
         print('└── Packing volume completed.\n')
         wk.clear_src()
+
+
+def print_format(volume_list):
+    """格式化打印每卷标题"""
+    max_chars_per_line = 55 # 每行的最大字符数
+    max_unit_len = max([len(it) for it in volume_list])
+    max_ele_per_line_num = max_chars_per_line // (max_unit_len + 4)
+
+    template = "{0:>2d}: {1:{2}<{3}s}"
+
+    total_text = ""
+    current_line = ""
+    current_line_num = 0
+    for idx, volume_title in enumerate(volume_list):
+        current_line_num += 1
+        if current_line_num > max_ele_per_line_num:
+            total_text += current_line.rstrip() + '\n'
+            current_line_num = 1
+            current_line = template.format(idx + 1, volume_title, chr(12288), max_unit_len + 2) # 使用chr(12288)填充
+        else:
+            current_line += template.format(idx + 1, volume_title, chr(12288), max_unit_len + 2)
+
+    total_text += current_line
+    print(total_text)
 
 
 
