@@ -96,7 +96,7 @@ class Epub:
         _, file_name = os.path.split(file_path)
         file_base, file_ext = os.path.splitext(file_name)
         with open(file_path, 'rb') as f:
-            image = epub.EpubItem(uid='image_' + file_base, 
+            image = epub.EpubItem(uid='image_' + file_base,
                                   file_name='Images/' + file_name,
                                   media_type='image/jpeg',
                                   content=f.read())

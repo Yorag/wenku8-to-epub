@@ -162,13 +162,15 @@ class Wenku8Download:
         if proxy_host: img_url = img_url.replace(urlparse(img_url).hostname, proxy_host)
         res = self._s.get(img_url)
         self.image_idx += 1
+        _, file_name = os.path.split(img_url)
+        _, file_ext = os.path.splitext(file_name)
         file_base = '{:0>3d}'.format(self.image_idx)
-        file_name = file_base + '.jpg'
+        file_name = file_base +  file_ext
         file_path = 'src/' + file_name
         if res.status_code == 200:
             with open(file_path, 'wb') as f:
                 f.write(res.content)
-            return (file_path, file_name, file_base)
+            return (file_path, file_name, file_base) #('src/001.jpg', '001.jpg', '001')
         else:
             return (file_path, None, None)
 
