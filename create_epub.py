@@ -15,7 +15,6 @@ XML_IMAGE_LABEL = '''<div class="illus duokan-image-single img">
 </div>'''
 
 
-
 class Epub:
     def __init__(self):
         self.book = epub.EpubBook()
@@ -87,7 +86,7 @@ class Epub:
                 if it['chapter'].title == chapter_title:
                     it['pages'].append(cont)
                     return
-            self.chapters.append({ 'chapter': epub.Section(chapter_title), 'pages': [cont] })
+            self.chapters.append({ 'chapter': epub.Section(chapter_title, href=file_name), 'pages': [cont] })
         else: # 无二级目录
             self.chapters.append({ 'chapter': cont })
 

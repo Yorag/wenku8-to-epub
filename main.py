@@ -16,12 +16,10 @@ from wenku8 import Wenku8Download
 save_epub_dir = 'epub'
 # 每次网络请求后停顿时间，避免封IP
 sleep_time = 2
-# 是否将插图第一页设为封面，若不设置就默认使用小说详情页封面
+# 是否将插图第一页设为封面，若不设置就默 认使用小说详情页封面
 use_divimage_set_cover = True
 # 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
 wenkupic_proxy_host = 'wk8-test.jsone.gq'
-
-
 
 # ---------------------------
 
@@ -153,3 +151,5 @@ if __name__ == '__main__':
             print('Error: mode_id is invalid.')
     else:
         print('Error: mode_id is invalid.')
+
+
