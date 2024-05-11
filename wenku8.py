@@ -124,15 +124,11 @@ class Wenku8Download:
         res = self._s.get(chapter_url)
         html_text = res.content.decode('gbk')
 
-        if res.status_code != 200:
-            error_list = [('因版权问题', '<br'), ('Access denied', '</')]
-            for error in error_list:
-                if error[0] in html_text:
-                    self._get_error_msg(html_text, error[0], error[1])
-                    return (None, None, None)
-            self.error_msg = 'Unknow error.'
-            print('Error HTML:', html_text)
-            return(None, None, None)
+        error_list = [('因版权问题', '<br'), ('Access denied', '</')]
+        for error in error_list:
+            if error[0] in html_text:
+                self._get_error_msg(html_text, error[0], error[1])
+                return (None, None, None)
 
         html = etree.HTML(html_text)
         content_title = html.xpath('//*[@id="title"]/text()')

@@ -1,5 +1,5 @@
 """
-从wenku8.net下载小说，并按卷转epub
+从wenku8.net下载小说，并按卷/整本转epub
 """
 import os
 import sys
@@ -37,7 +37,7 @@ def download_volume(book_epub, it, mode_id=0):
     print('Start making volume:', wk.book['title'], it['volume'])
     for chapter_title, chapter_href in it['chapter']:
         content_title, content_list, image_urls = wk.get_chapter(chapter_href)
-        if wk.error_msg: print('Error:', wk.error_msg); return
+        if wk.error_msg: print('Error:', wk.error_msg); return False
 
         # 设置HTML格式
         html_body = XML_TITLE_LABEL.format(ct=chapter_title)
@@ -71,6 +71,8 @@ def download_volume(book_epub, it, mode_id=0):
 
     if not is_set_cover:  # 插图第一张图片未能设置为封面，就把缩略图作为封面
         book_epub.set_cover('src/cover.jpg')
+        is_set_cover = True
+    return True
 
 
 def whole_book_download():
@@ -84,7 +86,8 @@ def whole_book_download():
     global is_set_cover
     is_set_cover = not use_divimage_set_cover
     for it in wk.book['toc']:
-        download_volume(book_epub, it, mode_id=1)
+        flag = download_volume(book_epub, it, mode_id=1)
+        if not flag: return
         print('└── Making volume completed.\n')
 
     book_epub.pack_book(save_epub_dir)
@@ -118,10 +121,8 @@ def volume_by_volume_download():
                                tag_list=wk.book['tags'], vol_idx=vol_idx,
                                cover_path='src/cover.jpg' if not use_divimage_set_cover else None)
 
-        download_volume(book_epub, it, mode_id=0)
-
-        if not is_set_cover: # 插图第一张图片未能设置为封面，就把缩略图作为封面
-            book_epub.set_cover('src/cover.jpg')
+        flag = download_volume(book_epub, it, mode_id=0)
+        if not flag: return
 
         book_epub.pack_book(save_epub_dir)
         print('└── Packing volume completed.\n')
