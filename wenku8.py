@@ -102,7 +102,6 @@ class Wenku8Download:
         if tags: self.book['tags'] = tags[0].strip().lstrip('作品Tags：').split()
 
         description = html.xpath('//*[@id="content"]/div[1]/table[2]/tr/td[2]/span[last()]/text()')
-        '//*[@id="content"]/div[1]/table[2]/tbody/tr/td[2]/span[4]'
         if description: self.book['description'] = '\n'.join([desp.strip() for desp in description])
 
     @delay_time
