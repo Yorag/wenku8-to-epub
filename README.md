@@ -45,12 +45,13 @@ python main.py
 
 **可调参数**（在`main.py`文件内）
 
-| 参数名                   | 默认值 | 作用描述                                                     |
-| :----------------------- | ------ | ------------------------------------------------------------ |
-| `save_epub_dir`          | `epub` | epub存储目录（相对路径/绝对路径）                            |
-| `sleep_time`             | `2`    | 每次网络请求后停顿时间，避免封IP                             |
-| `use_divimage_set_cover` | `True` | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
-| `wenkupic_proxy_host`    | `None` | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| 参数名                   | 默认值           | 作用描述                                                     |
+| :----------------------- | ---------------- | ------------------------------------------------------------ |
+| `save_epub_dir`          | `epub`           | epub存储目录（相对路径/绝对路径）                            |
+| `sleep_time`             | `2`              | 每次网络请求后停顿时间，避免封IP                             |
+| `use_divimage_set_cover` | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
+| `wenkupic_proxy_host`    | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| `wenku_hostname`         | `www.wenku8.com` | 访问wenku8的主机名                                           |
 
 > 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
 
@@ -66,7 +67,9 @@ python main.py
 
 **解决：**
 
-使用cloudflare workers反代`pic.wenku8.com`。
+方法1：换个网络环境再试试。
+
+方法2：使用cloudflare workers反代`pic.wenku8.com`。
 
 - 新建一个cloudflare workers；
 - 部署。编辑代码，将下面代码粘贴进去后部署；
@@ -90,6 +93,10 @@ async function handleRequest(request) {
 ```
 
 - 将反代的网址粘贴到  main.py的 wenkupic_proxy_host变量处，如`wenkupic_proxy_host = xxxx.xxxxx.workers.dev`
+
+
+
+
 
 ### 2. Access denied
 
