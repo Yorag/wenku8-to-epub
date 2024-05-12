@@ -106,7 +106,6 @@ class Epub:
                                   content=f.read())
             self.book.add_item(image)
 
-
     def pack_book(self, epub_dir=''):
         """打包epub"""
         self._set_toc()
@@ -114,7 +113,11 @@ class Epub:
         # 添加目录信息
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
-        epub_path = os.path.join(epub_dir, self.title + '.epub')
+        # 检查书名是否合规
+        illegal_chars = '\\/:*?"<>|'
+        file_base = ''.join('_' if c in illegal_chars else c for c in self.title)
+
+        epub_path = os.path.join(epub_dir, file_base + '.epub')
         epub.write_epub(epub_path, self.book)
 
 
