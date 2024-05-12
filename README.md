@@ -50,10 +50,10 @@ python main.py
 | `sleep_time`              | `2`              | 每次网络请求后停顿时间，避免封IP                             |
 | `use_divimage_set_cover`  | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
 | `wenku_host`              | `www.wenku8.com` | 访问wenku8的主机名                                           |
-| `wenku_proxy_host`        | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| `wenkupic_proxy_host`     | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
 | `wenkuandroid_proxy_host` | `None`           | 反代`app.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
 
-> 目前wenku_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
+> 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
 
 
 
@@ -128,7 +128,6 @@ async function handleRequest(request) {
 **原因：** 访问过于频繁，请求受限。
 
 **解决：** 增加请求延迟，自定义参数增加`sleep_time`的值。
-
 
 
 
