@@ -44,14 +44,14 @@ python main.py
 
 **可调参数**（在`main.py`文件内）
 
-| 参数名                    | 默认值           | 作用描述                                                     |
-| :------------------------ | ---------------- | ------------------------------------------------------------ |
-| `save_epub_dir`           | `epub`           | epub存储目录（相对路径/绝对路径）                            |
-| `sleep_time`              | `2`              | 每次网络请求后停顿时间，避免封IP                             |
-| `use_divimage_set_cover`  | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
-| `wenku_host`              | `www.wenku8.com` | 访问wenku8的主机名                                           |
-| `wenkupic_proxy_host`     | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
-| `wenkuandroid_proxy_host` | `None`           | 反代`app.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| 参数名                   | 默认值           | 作用描述                                                     |
+| :----------------------- | ---------------- | ------------------------------------------------------------ |
+| `save_epub_dir`          | `epub`           | epub存储目录（相对路径/绝对路径）                            |
+| `sleep_time`             | `2`              | 每次网络请求后停顿时间，避免封IP                             |
+| `use_divimage_set_cover` | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
+| `wenku_host`             | `www.wenku8.com` | 访问wenku8的主机名                                           |
+| `wenkupic_proxy_host`    | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| `wenkuapp_proxy_host`    | `None`           | 反代`app.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
 
 > 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
 
@@ -79,7 +79,7 @@ python main.py
 ```js
 const host_mapping = {
     // 'app.wenku8.com': ['/android.php'],
-    'pic.wenku8.com': ['/pictures/'],
+    'pic.wenku8.com': ['/pictures/']
 };
 
 addEventListener('fetch', event => {
@@ -115,7 +115,7 @@ async function handleRequest(request) {
 }
 ```
 
-- 将反代的网址粘贴到  main.py的 wenku_proxy_host变量处，如`wenku_proxy_host = xxxx.xxxxx.workers.dev`
+- 将反代的网址粘贴到main.py的 wenkupic_proxy_host / wenkuapp_proxy_host变量处，如`wenkupic_proxy_host = xxxx.xxxxx.workers.dev`
 
 
 

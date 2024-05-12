@@ -20,7 +20,7 @@ sleep_time = 2
 use_divimage_set_cover = True
 # 反代pic.wenku8.com、app.wenku8.com的hostname：xxxx.xxxx.workers.dev 或 自定义域名
 wenkupic_proxy_host = 'wk8-test.jsone.gq'
-wenkuandroid_proxy_host = None
+wenkuapp_proxy_host = None
 # 指定wenku8的hostname
 wenku_host = 'www.wenku8.com'
 # ---------------------------
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     book_id = input(f'输入要下载的小说id（如 https://{wenku_host}/book/2906.htm 的id是2906）：'); print()
     if not book_id.isdigit(): print('Error: book_id is invalid.'); sys.exit(0)
 
-    wk = Wenku8Download(book_id, wenku_host, wenkupic_proxy_host, wenkuandroid_proxy_host)
+    wk = Wenku8Download(book_id, wenku_host, wenkupic_proxy_host, wenkuapp_proxy_host)
     if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
     wk.sleep_time = sleep_time # 设置延迟时间
 
