@@ -19,7 +19,13 @@ def delay_time(func):
 
 
 class Wenku8Download:
-    def __init__(self, book_id):
+    def __init__(self, book_id, hostname='www.wenku8.com'):
+        self.hostname = hostname
+        self.image_idx = 0
+        self.sleep_time = 1  # 默认网络请求停顿时间1s
+        # 报错信息
+        self.error_msg = ''
+        self.src_white_list = ['style.css', 'cover.jpg']
         self.book = {
             'title': '',
             'publisher': '',
@@ -29,39 +35,32 @@ class Wenku8Download:
             'tags': [],
             'description': '',
             'toc': [],  # [{'volume': '','chapter': []}]
-            'api': {}  # 即self._api
+            'api': {
+                'detail': f'https://{self.hostname}/book/{book_id}.htm',
+                'toc': 'https://www.wenku8.net{toc_path}'
+            }
         }
 
-        #------------------------
-        self._api = {
-            'detail': 'https://www.wenku8.net/book/{book_id}.htm',
-            'toc': 'https://www.wenku8.net{toc_path}'
-        }
+        #------------------------、
         self._s = requests.Session()
         self._s.headers.update({
             'Content-Type': 'application/x-www-form-urlencoded',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0'
         })
-        self.image_idx = 0
-        self.sleep_time = 1  # 默认网络请求停顿时间1s
-        # 错误信息
-        self.error_msg = ''
 
         # 先清除src文件夹下无关文件
-        self.src_white_list = ['style.css', 'cover.jpg']
         self.clear_src()
 
         # 初始化详情页和目录
-        self._get_detail(book_id)
+        self._get_detail()
         if self.error_msg: return
         self._get_toc()
         self._save_cover()
 
 
     @delay_time
-    def _get_detail(self, book_id):
+    def _get_detail(self):
         """获取书籍详情页内容，收集元数据"""
-        self.book['api']['detail'] = self._api['detail'].format(book_id=book_id)
         res = self._s.get(self.book['api']['detail'])
         html_text = res.content.decode('gbk')
         if res.status_code != 200:
@@ -74,7 +73,7 @@ class Wenku8Download:
         html = etree.HTML(html_text)
         toc_path = html.xpath('//*[@id="content"]/div[1]/div[4]/div/span[1]/fieldset/div/a/@href')
         if toc_path:
-            self.book['api']['toc'] = self._api['toc'].format(toc_path=toc_path[0])
+            self.book['api']['toc'] = self.book['api']['toc'].format(toc_path=toc_path[0])
         else:
             self.error_msg = 'directory not detected.'
             return

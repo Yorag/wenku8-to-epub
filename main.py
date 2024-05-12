@@ -18,9 +18,10 @@ save_epub_dir = 'epub'
 sleep_time = 2
 # 是否将插图第一页设为封面，若不设置就默 认使用小说详情页封面
 use_divimage_set_cover = True
-# 反代pic.wenku8.com的host：xxxx.xxxx.workers.dev 或 自定义域名
-wenkupic_proxy_host = 'wk8-test.jsone.gq'
-
+# 反代pic.wenku8.com的hostname：xxxx.xxxx.workers.dev 或 自定义域名
+wenkupic_proxy_hostname = 'wk8-test.jsone.gq'
+# 指定wenku8的hostname
+wenku_hostname = 'www.wenku8.com'
 # ---------------------------
 
 
@@ -49,7 +50,7 @@ def download_volume(book_epub, it, mode_id=0):
         elif image_urls:
             print('├── Start downloading chapter-image:', chapter_title)
             for img_url in image_urls:
-                file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_host)
+                file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_hostname)
                 if file_name:
                     if use_divimage_set_cover and not is_set_cover:  # 将插图的第一张长图作为封面
                         with Image.open(file_path) as img:
@@ -135,7 +136,7 @@ def print_format(volume_list):
     max_unit_len = max([len(it) for it in volume_list])
     max_ele_per_line_num = max_chars_per_line // (max_unit_len + 4)
 
-    template = "{0:>2d}: {1:{2}<{3}s}"
+    template = "{0:>2d}: {1:{2}<{3}s}\t"
 
     total_text = ""
     current_line = ""
@@ -145,9 +146,9 @@ def print_format(volume_list):
         if current_line_num > max_ele_per_line_num:
             total_text += current_line.rstrip() + '\n'
             current_line_num = 1
-            current_line = template.format(idx + 1, volume_title, chr(12288), max_unit_len + 2) # 使用chr(12288)填充
+            current_line = template.format(idx + 1, volume_title, chr(12288), max_unit_len) # 使用chr(12288)填充
         else:
-            current_line += template.format(idx + 1, volume_title, chr(12288), max_unit_len + 2)
+            current_line += template.format(idx + 1, volume_title, chr(12288), max_unit_len)
 
     total_text += current_line
     print(total_text)
@@ -155,10 +156,10 @@ def print_format(volume_list):
 
 
 if __name__ == '__main__':
-    book_id = input('输入要下载的小说id（如 https://www.wenku8.net/book/2906.htm 的id是2906）：'); print()
+    book_id = input('输入要下载的小说id（如 https://www.wenku8.com/book/2906.htm 的id是2906）：'); print()
     if not book_id.isdigit(): print('Error: book_id is invalid.'); sys.exit(0)
 
-    wk = Wenku8Download(book_id)
+    wk = Wenku8Download(book_id, wenku_hostname)
     if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
     wk.sleep_time = sleep_time # 设置延迟时间
 
@@ -166,13 +167,10 @@ if __name__ == '__main__':
 
     mode_id = input('选择下载模式：0-按卷下载（默认）；1-整本下载。\n输入模式索引：'); print()
     if not mode_id: mode_id = '0'
-    if mode_id.isdigit():
-        if int(mode_id) == 0:
-            volume_by_volume_download()
-        elif int(mode_id) == 1:
-            whole_book_download()
-        else:
-            print('Error: mode_id is invalid.')
+    if mode_id.isdigit() and int(mode_id) == 0:
+        volume_by_volume_download()
+    elif mode_id.isdigit() and int(mode_id) == 1:
+        whole_book_download()
     else:
         print('Error: mode_id is invalid.')
 
