@@ -21,6 +21,7 @@ class Epub:
         self.title = None
         self.chapters = [] # [{'chapter': '','pages': []}, {'chapter': ''}, ...]
         self.current_page_idx = 0 # 记录设置到第几页了
+        self.is_set_cover = False # 记录是否已设置过封面
 
         # 设置style.css
         self._set_style()
@@ -35,6 +36,8 @@ class Epub:
         self.book.set_title(full_title)
         self.book.set_language(lang)
         self.book.add_author(author)
+
+        self.is_set_cover = False
         if cover_path: self.set_cover(cover_path)
 
         self.book.add_metadata('DC', 'description', desp)
@@ -61,6 +64,7 @@ class Epub:
             self.book.set_cover('Images/cover.jpg', f.read())
         # 将cover.xhtml在spine中按序排列
         self.book.get_item_with_id('cover').is_linear = True
+        self.is_set_cover = True
 
 
     def _set_style(self, css_file_path='src/style.css'):

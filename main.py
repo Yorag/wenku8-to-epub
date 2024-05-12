@@ -18,23 +18,20 @@ save_epub_dir = 'epub'
 sleep_time = 2
 # 是否将插图第一页设为封面，若不设置就默 认使用小说详情页封面
 use_divimage_set_cover = True
-# 反代pic.wenku8.com的hostname：xxxx.xxxx.workers.dev 或 自定义域名
-wenkupic_proxy_hostname = 'wk8-test.jsone.gq'
+# 反代pic.wenku8.com、app.wenku8.com的hostname：xxxx.xxxx.workers.dev 或 自定义域名
+wenkupic_proxy_host = 'wk8-test.jsone.gq'
+wenkuandroid_proxy_host = None
 # 指定wenku8的hostname
-wenku_hostname = 'www.wenku8.com'
+wenku_host = 'www.wenku8.com'
 # ---------------------------
 
 
-
-is_set_cover = not use_divimage_set_cover # 记录是否已设置过封面
 
 if not os.path.exists(save_epub_dir):
     os.makedirs(save_epub_dir)
 
 def download_volume(book_epub, it, mode_id=0):
     """封装chapter"""
-    global is_set_cover
-
     print('Start making volume:', wk.book['title'], it['volume'])
     for chapter_title, chapter_href in it['chapter']:
         content_title, content_list, image_urls = wk.get_chapter(chapter_href)
@@ -50,14 +47,13 @@ def download_volume(book_epub, it, mode_id=0):
         elif image_urls:
             print('├── Start downloading chapter-image:', chapter_title)
             for img_url in image_urls:
-                file_path, file_name, file_base = wk.save_image(img_url, wenkupic_proxy_hostname)
+                file_path, file_name, file_base = wk.save_image(img_url)
                 if file_name:
-                    if use_divimage_set_cover and not is_set_cover:  # 将插图的第一张长图作为封面
+                    if use_divimage_set_cover and not book_epub.is_set_cover:  # 将插图的第一张长图作为封面
                         with Image.open(file_path) as img:
                             width, height = img.size
                         if width <= height:
                             book_epub.set_cover(file_path)
-                            is_set_cover = True
                     book_epub.set_images(file_path)
                     html_body += XML_IMAGE_LABEL.format(fb=file_base, fn=file_name)
                 print('│   ├──', img_url, '->', file_path, 'success' if file_name else 'fail')
@@ -70,9 +66,8 @@ def download_volume(book_epub, it, mode_id=0):
         else:
             book_epub.set_html(chapter_title, html_body)  # 分卷下载，不指定第三个参数（卷名）
 
-    if not is_set_cover:  # 插图第一张图片未能设置为封面，就把缩略图作为封面
+    if not book_epub.is_set_cover:  # 插图第一张图片未能设置为封面，就把缩略图作为封面
         book_epub.set_cover('src/cover.jpg')
-        is_set_cover = True
     return True
 
 
@@ -84,8 +79,6 @@ def whole_book_download():
                            tag_list=wk.book['tags'], vol_idx=1,
                            cover_path='src/cover.jpg' if not use_divimage_set_cover else None)
 
-    global is_set_cover
-    is_set_cover = not use_divimage_set_cover
     for it in wk.book['toc']:
         flag = download_volume(book_epub, it, mode_id=1)
         if not flag: return
@@ -113,8 +106,6 @@ def volume_by_volume_download():
         if vol_idx not in volume_idx_list: continue
 
         wk.image_idx = 0
-        global is_set_cover
-        is_set_cover = not use_divimage_set_cover
 
         book_epub = Epub()
         book_epub.set_metadata(wk.book['title'], it['volume'],author=wk.book['author'], desp=wk.book['description'],
@@ -156,16 +147,19 @@ def print_format(volume_list):
 
 
 if __name__ == '__main__':
-    book_id = input('输入要下载的小说id（如 https://www.wenku8.com/book/2906.htm 的id是2906）：'); print()
+    book_id = input(f'输入要下载的小说id（如 https://{wenku_host}/book/2906.htm 的id是2906）：'); print()
     if not book_id.isdigit(): print('Error: book_id is invalid.'); sys.exit(0)
 
-    wk = Wenku8Download(book_id, wenku_hostname)
+    wk = Wenku8Download(book_id, wenku_host, wenkupic_proxy_host, wenkuandroid_proxy_host)
     if wk.error_msg: print('Error:', wk.error_msg); sys.exit(0)
     wk.sleep_time = sleep_time # 设置延迟时间
 
     print('Light Noval Title:', wk.book['title'], '\n')
 
     mode_id = input('选择下载模式：0-按卷下载（默认）；1-整本下载。\n输入模式索引：'); print()
+
+    if not wk.book['copyright']: print('Note: web copyright is restricted and will be downloaded from APP.\n')
+
     if not mode_id: mode_id = '0'
     if mode_id.isdigit() and int(mode_id) == 0:
         volume_by_volume_download()

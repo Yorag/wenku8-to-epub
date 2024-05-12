@@ -12,6 +12,7 @@
 - 支持填充小说元数据（标题、作者、介绍、出版商、标签、封面）
   - 支持[calibre](https://github.com/kovidgoyal/calibre)自有元数据（丛书series、丛书编号series_index）
 - 支持小说目录自动生成
+- 支持从APP端获取章节内容
 
 > 所有数据源自[轻小说文库](https://www.wenku8.net/)。
 
@@ -20,8 +21,6 @@
 ![分卷下载](./screenshot/image-20240510170318408.png)
 
 ![整本下载](./screenshot/image-20240509114425897.png)
-
-
 
 
 
@@ -45,23 +44,24 @@ python main.py
 
 **可调参数**（在`main.py`文件内）
 
-| 参数名                   | 默认值           | 作用描述                                                     |
-| :----------------------- | ---------------- | ------------------------------------------------------------ |
-| `save_epub_dir`          | `epub`           | epub存储目录（相对路径/绝对路径）                            |
-| `sleep_time`             | `2`              | 每次网络请求后停顿时间，避免封IP                             |
-| `use_divimage_set_cover` | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
-| `wenkupic_proxy_host`    | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
-| `wenku_hostname`         | `www.wenku8.com` | 访问wenku8的主机名                                           |
+| 参数名                    | 默认值           | 作用描述                                                     |
+| :------------------------ | ---------------- | ------------------------------------------------------------ |
+| `save_epub_dir`           | `epub`           | epub存储目录（相对路径/绝对路径）                            |
+| `sleep_time`              | `2`              | 每次网络请求后停顿时间，避免封IP                             |
+| `use_divimage_set_cover`  | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
+| `wenku_host`              | `www.wenku8.com` | 访问wenku8的主机名                                           |
+| `wenku_proxy_host`        | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
+| `wenkuandroid_proxy_host` | `None`           | 反代`app.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
 
-> 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
+> 目前wenku_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
 
 
 
 ## 常见问题
 
-### 1. 插图下载失败
+### 1. SSLError
 
-出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='pic.wenku8.com', port=443)`
+出现`requests.exceptions.SSLError: HTTPSConnectionPool(host='xxx.wenku8.com', port=443)`
 
 **原因：** 可能是本地网络环境问题。
 
@@ -69,30 +69,53 @@ python main.py
 
 方法1：换个网络环境再试试。
 
-方法2：使用cloudflare workers反代`pic.wenku8.com`。
+方法2：使用cloudflare workers反代报错域名`pic.wenku8.com`。
 
 - 新建一个cloudflare workers；
-- 部署。编辑代码，将下面代码粘贴进去后部署；
+- 部署。选择编辑代码，将下面代码粘贴进编辑器后部署；
+
+  > 下面代码可以设置代理多个域名，通过路径区分。
 
 ```js
-const host = "pic.wenku8.com";
+const host_mapping = {
+    'pic.wenku8.com': ['/pictures/'],
+    'app.wenku8.com': ['/android.php']
+};
+
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event.request))
 })
+
 async function handleRequest(request) {
     var u = new URL(request.url);
-    u.host = host;
-    var req = new Request(u, {
-        method: request.method,
-        headers: request.headers,
-        body: request.body
-    });
-    const result = await fetch(req);
-    return result;
+    var path = u.pathname;
+    
+    var proxy_host = null;
+    for (const host in host_mapping) {
+        const paths = host_mapping[host];
+        for (const p of paths) {
+            if (path.startsWith(p)) {
+                proxy_host = host;
+                break;
+            }
+        }
+        if (proxy_host !== null) { break; }
+    }
+
+    if (proxy_host !== null) {
+        u.host = proxy_host;
+        var req = new Request(u, {
+            method: request.method,
+            headers: request.headers,
+            body: request.body
+        });
+        const result = await fetch(req);
+        return result;
+    }
 }
 ```
 
-- 将反代的网址粘贴到  main.py的 wenkupic_proxy_host变量处，如`wenkupic_proxy_host = xxxx.xxxxx.workers.dev`
+- 将反代的网址粘贴到  main.py的 wenku_proxy_host变量处，如`wenku_proxy_host = xxxx.xxxxx.workers.dev`
 
 
 
