@@ -78,8 +78,8 @@ python main.py
 
 ```js
 const host_mapping = {
+    // 'app.wenku8.com': ['/android.php'],
     'pic.wenku8.com': ['/pictures/'],
-    'app.wenku8.com': ['/android.php']
 };
 
 addEventListener('fetch', event => {
