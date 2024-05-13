@@ -1,3 +1,4 @@
 requests>=2.31.0
 EbookLib>=0.18
 pillow>=10.0.0
+lxml>=5.1.0

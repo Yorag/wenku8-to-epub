@@ -20,7 +20,7 @@ def delay_time(func):
 
 
 class Wenku8Download:
-    def __init__(self, book_id, hostname='www.wenku8.com', wenkupic_proxy_host=None, wenkuandroid_proxy_host=None):
+    def __init__(self, book_id, hostname='www.wenku8.com', wenkupic_proxy_host=None, wenkuapp_proxy_host=None):
         self.hostname = hostname
         self.wenkupic_proxy_host = wenkupic_proxy_host
         self.image_idx = 0
@@ -46,7 +46,7 @@ class Wenku8Download:
         }
 
         #------------------------
-        self.wka = Wenku8AndroidDownload(wenkuandroid_proxy_host)
+        self.wka = Wenku8AndroidDownload(wenkuapp_proxy_host)
         self.wka.sleep_time = self.sleep_time
 
         self._s = requests.Session()
