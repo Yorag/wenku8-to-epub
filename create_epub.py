@@ -7,7 +7,6 @@ import uuid
 
 from ebooklib import epub
 
-
 XML_TITLE_LABEL = '<h1>{ct}</h1><hr/>'
 XML_PARAGRAPH_LABEL = '<p>{p}</p>'
 XML_IMAGE_LABEL = '''<div class="illus duokan-image-single img">
@@ -19,34 +18,36 @@ class Epub:
     def __init__(self):
         self.book = epub.EpubBook()
         self.title = None
-        self.chapters = [] # [{'chapter': '','pages': []}, {'chapter': ''}, ...]
-        self.current_page_idx = 0 # 记录设置到第几页了
-        self.is_set_cover = False # 记录是否已设置过封面
+        self.chapters = []  # [{'chapter': '','pages': []}, {'chapter': ''}, ...]
+        self.current_page_idx = 0  # 记录设置到第几页了
+        self.is_set_cover = False  # 记录是否已设置过封面
 
         # 设置style.css
         self._set_style()
 
     def set_metadata(self, title, volume_title=None, author=None, lang='zh', desp=None, date=None,
-                publisher=None, source_url=None, tag_list=[], vol_idx: int=None, cover_path=None):
+                     publisher=None, source_url=None, tag_list=None, vol_idx: int = None, cover_path=None):
         full_title = title + (' ' + volume_title if volume_title else '')
         self.title = full_title
         '''设置epub元数据'''
-        self.book_uuid = str(uuid.uuid4())
-        self.book.set_identifier(self.book_uuid)
+        book_uuid = str(uuid.uuid4())
+        self.book.set_identifier(book_uuid)
         self.book.set_title(full_title)
         self.book.set_language(lang)
         self.book.add_author(author)
 
         self.is_set_cover = False
-        if cover_path: self.set_cover(cover_path)
+        if cover_path:
+            self.set_cover(cover_path)
 
         self.book.add_metadata('DC', 'description', desp)
         # self.book.add_metadata('DC', 'date', date if date else datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         self.book.add_metadata('DC', 'publisher', publisher)
         self.book.add_metadata('DC', 'creator', author)
         self.book.add_metadata('DC', 'source', source_url)
-        for tag in tag_list:
-            self.book.add_metadata('DC', 'subject', tag)
+        if isinstance(tag_list, list):
+            for tag in tag_list:
+                self.book.add_metadata('DC', 'subject', tag)
         self.book.add_metadata('DC', 'belongs-to-collection', self.title.split()[0])
 
         # 适配calibre数据
@@ -54,9 +55,9 @@ class Epub:
                                {'name': 'calibre:title_sort', 'content': full_title})
         self.book.add_metadata(None, 'meta', None,
                                {'name': 'calibre:series', 'content': title})
-        if vol_idx: self.book.add_metadata(None, 'meta', None,
-                                           {'name': 'calibre:series_index', 'content': str(vol_idx)})
-
+        if vol_idx:
+            self.book.add_metadata(None, 'meta', None,
+                                   {'name': 'calibre:series_index', 'content': str(vol_idx)})
 
     def set_cover(self, cover_path):
         """设置封面"""
@@ -66,14 +67,12 @@ class Epub:
         self.book.get_item_with_id('cover').is_linear = True
         self.is_set_cover = True
 
-
     def _set_style(self, css_file_path='src/style.css'):
         """设置css文件"""
         with open(css_file_path, 'r', encoding='utf-8') as f:
             style_data = f.read()
         css = epub.EpubItem(uid='style_nav', file_name='Styles/style.css', media_type='text/css', content=style_data)
         self.book.add_item(css)
-
 
     def set_html(self, page_title, page_content, chapter_title=None, lang='zh'):
         """设置章节内容，xhtml格式"""
@@ -85,15 +84,14 @@ class Epub:
         cont.set_content(page_content.encode('utf-8'))
         self.book.add_item(cont)
         # 将该页内容追加到对应卷
-        if chapter_title: # 有二级目录
+        if chapter_title:  # 有二级目录
             for it in self.chapters:
                 if it['chapter'].title == chapter_title:
                     it['pages'].append(cont)
                     return
-            self.chapters.append({ 'chapter': epub.Section(chapter_title, href=file_name), 'pages': [cont] })
-        else: # 无二级目录
-            self.chapters.append({ 'chapter': cont })
-
+            self.chapters.append({'chapter': epub.Section(chapter_title, href=file_name), 'pages': [cont]})
+        else:  # 无二级目录
+            self.chapters.append({'chapter': cont})
 
     def set_images(self, file_path):
         """设置图片对象"""
@@ -120,25 +118,25 @@ class Epub:
         epub_path = os.path.join(epub_dir, file_base + '.epub')
         epub.write_epub(epub_path, self.book)
 
-
     def _set_toc(self):
         """设置目录文件。需要在设置完所有html后设置"""
         toc_list = []
         for it in self.chapters:
-            if it.get('pages'): toc_list.append((it['chapter'], it['pages']))
-            else: toc_list.append(it['chapter'])
+            if it.get('pages'):
+                toc_list.append((it['chapter'], it['pages']))
+            else:
+                toc_list.append(it['chapter'])
         self.book.toc = tuple(toc_list)
-            
 
     def _set_spine(self):
         self.book.spine = ['cover', 'nav']
         elem_list = []
         for c in self.chapters:
-            if isinstance(c['chapter'], epub.EpubHtml): elem_list.append(c['chapter'])
-            else: elem_list += c['pages']
+            if isinstance(c['chapter'], epub.EpubHtml):
+                elem_list.append(c['chapter'])
+            else:
+                elem_list += c['pages']
         self.book.spine += elem_list
-
-
 
 
 if __name__ == '__main__':
@@ -146,24 +144,23 @@ if __name__ == '__main__':
 
     book.set_metadata("测试 第一卷", author="Yorag", desp="介绍内容", cover_path="src/cover.jpg")
     book.set_html('第一章 01',
-        '<h1>第一章 01</h1><p>Introduction paragraph.</p>',
-        '第一章'
-        )
+                  '<h1>第一章 01</h1><p>Introduction paragraph.</p>',
+                  '第一章'
+                  )
     book.set_html('第一章 02',
-        '<h1>第一章 02</h1><p>Introduction paragraph.</p>',
-        '第一章'
-        )
+                  '<h1>第一章 02</h1><p>Introduction paragraph.</p>',
+                  '第一章'
+                  )
     book.set_html('第二章 01',
-        '<h1>第二章 01</h1><p>Introduction paragraph.</p>',
-        '第二章'
-        )
+                  '<h1>第二章 01</h1><p>Introduction paragraph.</p>',
+                  '第二章'
+                  )
     book.set_html('第二章 02',
-        '<h1>第二章 02</h1><p>Introduction paragraph.</p>',
-        '第二章'
-        )
+                  '<h1>第二章 02</h1><p>Introduction paragraph.</p>',
+                  '第二章'
+                  )
     book.set_html('第三章',
-        '<h1>第三章</h1><p>Introduction paragraph.</p>'
-        )
-
+                  '<h1>第三章</h1><p>Introduction paragraph.</p>'
+                  )
 
     book.pack_book()

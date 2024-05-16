@@ -47,13 +47,11 @@ python main.py
 | 参数名                   | 默认值           | 作用描述                                                     |
 | :----------------------- | ---------------- | ------------------------------------------------------------ |
 | `save_epub_dir`          | `epub`           | epub存储目录（相对路径/绝对路径）                            |
-| `sleep_time`             | `2`              | 每次网络请求后停顿时间，避免封IP                             |
-| `use_divimage_set_cover` | `True`           | 是否将插图第一张长图设为封面，若不设置就默认使用小说详情页封面 |
+| `sleep_time`             | `2`              | 每次网络请求后停顿时间（秒）                                 |
+| `use_divimage_set_cover` | `True`           | 是否将插图第一张长图设为封面。若否就使用小说详情页封面       |
 | `wenku_host`             | `www.wenku8.com` | 访问wenku8的主机名                                           |
 | `wenkupic_proxy_host`    | `None`           | 反代`pic.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
 | `wenkuapp_proxy_host`    | `None`           | 反代`app.wenku8.com`的host：`xxxx.xxxx.workers.dev` 或 自定义域名 |
-
-> 目前wenkupic_proxy_host设置为作者反代域名`wk8-test.jsone.gq`，仅供测试，不保证长期有效。
 
 
 
@@ -70,6 +68,8 @@ python main.py
 方法1：换个网络环境再试试。
 
 方法2：使用cloudflare workers反代报错域名`pic.wenku8.com`。
+
+> 可临时使用作者搭建的反代域名`wk8-test.jsone.gq`，不保证长期有效。
 
 - 新建一个cloudflare workers；
 - 部署。选择编辑代码，将下面代码粘贴进编辑器后部署；
@@ -111,6 +111,8 @@ async function handleRequest(request) {
         });
         const result = await fetch(req);
         return result;
+    } else {
+        return new Response('Not Found', {status: 404});
     }
 }
 ```
@@ -140,6 +142,3 @@ async function handleRequest(request) {
   > 封面：默认使用插图的第一张长图（如果有，没有就使用详情页的缩略图），可以通过修改`main.py`的`use_divimage_set_cover`关闭。<br>
   > 介绍：目测wenku8只有详情页有，其他分卷没有，所以目前同一系列的不同卷用的是一个介绍。
 - 目测轻小说文库的小说目录只有两级`卷 -> 章`，所以分卷下载时不考虑分级（卷内全都是一级目录），整本下载时分两级。
-
-
-
